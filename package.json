@@ -1,0 +1,23 @@
+{
+  "name": "pracproject",
+  "version": "1.0.0",
+  "description": "The project to be worked on throughout practicals in Intro to DevOps",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "start": "node ./src/index.js"
+  },
+  "author": "Intro to DevOps",
+  "license": "MIT",
+  "devDependencies": {
+    "@eslint/js": "^9.1.1",
+    "@types/jest": "^29.5.12",
+    "eslint": "^9.4.0",
+    "globals": "^15.0.0",
+    "jest": "^29.7.0"
+  },
+  "dependencies": {
+    "readline-sync": "^1.4.10"
+  }
+}

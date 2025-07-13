@@ -5,6 +5,7 @@ import { createItemEntry, printInventoryTable } from "./inventoryDisplay.js";
 const lineLength = 73;
 const mainMenuOptions = ["View current inventory", "Log inventory change", "EXIT"];
 const invChangeMenuOptions = ["Add/remove stock for existing item", "Add stock for new item"];
+const invChange = 0;
 
 let itemCategories = ["Food", "Clothing", "Electronics"];
 let inventoryItems = [
@@ -34,7 +35,7 @@ do {
         case 1: {
             console.clear();
             logSeparated("Log Inventory Change", lineLength);
-//            const choice = readlineSync.keyInSelect(invChangeMenuOptions, "Please select an action to continue");
+            const choice = readlineSync.keyInSelect(invChangeMenuOptions, "Please select an action to continue");
             console.clear();
             logSeparated("Add/Remove Stock for Existing Item", lineLength);
             switch (choice) {

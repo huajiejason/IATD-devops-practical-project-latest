@@ -12,7 +12,7 @@ test("wrapString: wrap complex sentence", () => {
     expect(wrapString("This is a complex sentence that needs to be wrapped", 6)).toBe("This\nis a\ncompl-\nex se-\nntence\nthat\nneeds\nto be\nwrapp-\ned");
 });
 
-// PLACE TESTS FOR isValidDateString UNDER HERE
+// PLACE TESTS FOR isValidDateString UNDER HER
 
 // Test for invalid string
 

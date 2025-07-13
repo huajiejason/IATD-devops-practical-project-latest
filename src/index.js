@@ -34,7 +34,7 @@ do {
         case 1: {
             console.clear();
             logSeparated("Log Inventory Change", lineLength);
-            const choice = readlineSync.keyInSelect(invChangeMenuOptions, "Please select an action to continue");
+//            const choice = readlineSync.keyInSelect(invChangeMenuOptions, "Please select an action to continue");
             console.clear();
             logSeparated("Add/Remove Stock for Existing Item", lineLength);
             switch (choice) {

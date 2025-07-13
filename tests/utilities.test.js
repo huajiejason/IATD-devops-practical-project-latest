@@ -5,7 +5,7 @@ test("wrapString: wrap single word over two lines", () => {
 });
 
 test("wrapString: wrap multiple words over two lines", () => {
-    expect(wrapString("Too long", 4)).toBe("To\nlong");
+    expect(wrapString("Too long", 4)).toBe("Too\nlong");
 });
 
 test("wrapString: wrap complex sentence", () => {

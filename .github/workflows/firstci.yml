@@ -1,6 +1,6 @@
 name: Main CI
 
-on: pull-request
+on: pull_request
 
 jobs:
   Init_and_test:

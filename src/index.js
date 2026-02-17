@@ -26,75 +26,102 @@ function main() {
         input = readlineSync.keyInSelect(mainMenuOptions, "Please select an action to continue", {cancel: false});
 
         switch (input) {
-            case 0:
+        case 0:
             console.clear();
-            logSeparated("Current Schedule", lineLength);
-            printScheduleTable(flights);
+            logSeparated("Current Inventory", lineLength);
+            printInventoryTable(inventoryItems);
             readlineSync.keyInPause(wrapString("Press q to return to main menu..."), {limit: ["q"], guide: false});
             console.clear();
             break;
         case 1: {
             console.clear();
-            logSeparated("Update Schedule", lineLength);
-            const choice = readlineSync.keyInSelect(scheduleChangeMenuOptions, "Please select an action to continue");
+            logSeparated("Log Inventory Change", lineLength);
+            const choice = readlineSync.keyInSelect(invChangeMenuOptions, "Please select an action to continue");
             console.clear();
-            logSeparated("Change Flight Date", lineLength);
+            logSeparated("Add/Remove Stock for Existing Item", lineLength);
             switch (choice) {
                 case 0: {
-                    let flightId = "";
-                    let flightIndex = -1;
-                    flightId = flightId;
+                    let itemName = "";
+                    let itemIndex = -1;
                     do {
-                        flightId = readlineSync.question(wrapString("Enter the id of the flight to change the date for: "));
-                        for (let i = 0; i < flights.length; i++) {
-                            if (flights[i].id.toLowerCase() === flightId.toLowerCase()) {
-                                flightIndex = i;
+                        itemName = readlineSync.question(wrapString("Enter the name of the item to add/remove stock for: "));
+                        for (let i = 0; i < inventoryItems.length; i++) {
+                            if (inventoryItems[i].name.toLowerCase() === itemName.toLowerCase()) {
+                                itemIndex = i;
                                 break;
                             }
                         }
-                        if (flightIndex < 0) {
-                            logWrapped(`ERROR: Flight ID ${flightId} not found. Please enter the ID of a flight already tracked by this system.`);
-                        } else if (flightIndex < 0);
-                    } while (flightIndex < 0);
+                        if (itemIndex < 0) {
+                            logWrapped(`ERROR: Item of name ${itemName} not found. Please enter the name of an item already tracked by this system.`);
+                        }
+                    } while (itemIndex < 0);
 
-                    logWrapped(`The current departure date for ${flights[flightIndex].id} is ${flights[flightIndex].date}`);
-
-                    const date = enterFlightDate();
-                    flights[flightIndex].date = date;
+                    logWrapped(`There are currently ${inventoryItems[itemIndex].amount} ${inventoryItems[itemIndex].name} in stock. Last stock change was on ${inventoryItems[itemIndex].restocked}`);
                     
-                    logWrapped(`Flight successfully updated!`);
-                    readlineSync.keyInPause(wrapString("Press q to return to main menu..."), {limit: ["q"], guide: false});
+                    const action = readlineSync.keyInSelect(["Add stock", "Remove stock"], "Please select an action to continue");
+                    switch (action) {
+                        case 0: {
+                            const amount = readlineSync.questionInt(wrapString(`Enter the amount of ${inventoryItems[itemIndex].name} to add: `));
+                            const date = enterStockChangeDate();
+
+                            inventoryItems[itemIndex].amount += Number(amount);
+                            inventoryItems[itemIndex].restocked = date;
+
+                            console.clear();
+                            readlineSync.keyInPause(wrapString(`${inventoryItems[itemIndex].name} successfully updated, press q to return to main menu...`), {limit: ["q"], guide: false});
+                            break;
+                        }
+                        case 1: {
+                            let amount = 1;
+                            do {
+                                amount = readlineSync.questionInt(wrapString(`Enter the amount of ${inventoryItems[itemIndex].name} to remove: `));
+                                if (amount > inventoryItems[itemIndex].amount) logWrapped(`ERROR: There are only ${inventoryItems[itemIndex].amount} ${inventoryItems[itemIndex].name}, you cannot remove more than this.`);
+                            } while (amount > inventoryItems[itemIndex].amount);
+                            
+                            const date = enterStockChangeDate();
+
+                            inventoryItems[itemIndex].amount -= Number(amount);
+                            inventoryItems[itemIndex].restocked = date;
+
+                            console.clear();
+                            readlineSync.keyInPause(wrapString(`$${inventoryItems[itemIndex].name} successfully updated, press q to return to main menu...`), {limit: ["q"], guide: false});
+                            break;
+                        }
+                    }
                     break;
                 }
                 case 1: {
                     console.clear();
-                    logSeparated("Add New Flight", lineLength);
+                    logSeparated("Add Stock for New Item", lineLength);
 
-                    let airlineIndex = 0;
+                    const itemName = readlineSync.question(wrapString("Enter the name of the new item to add: "));
+
+                    let category = 0;
                     let cachedLength = 0;
                     do {
-                        airlineIndex = readlineSync.keyInSelect([...airlines, "Add New Airline"], "Select an existing airline or add a new one ", {cancel: false});
-                        cachedLength = airlines.length;
-                        if (airlineIndex === airlines.length) {
+                        category = readlineSync.keyInSelect([...itemCategories, "Add New Category"], "Select an existing category or add a new one ", {cancel: false});
+                        cachedLength = itemCategories.length;
+                        if (category === itemCategories.length) {
                             let isValid = false;
-                            let oldLength = airlines.length;
                             do {
-                                airlines = addAirline(readlineSync.question(wrapString("Enter the name of the airline to add: ")), airlines);
-                                isValid = oldLength !== airlines.length;
+                                isValid = addCategory(readlineSync.question(wrapString("Enter the name of the category to add: ")));
                             } while (!isValid);
                         }
-                    } while (airlineIndex === cachedLength);
+                    } while (category === cachedLength);
 
-                    const origin = readlineSync.question(wrapString("Enter the location the flight will depart from: "));
-                    const destination = readlineSync.question(wrapString("Enter the destination of the flight: "));
+                    let amount = 1;
+                    do {
+                        amount = readlineSync.questionInt(wrapString("Enter the amount of stock to add: "));
+                        if (amount < 1) logWrapped("ERROR: you must add at least one of this item.");
+                    } while (amount < 1);
 
-                    const date = enterFlightDate();
+                    const date = enterStockChangeDate();
 
-                    const flight = {id: generateFlightId(airlines[airlineIndex]), airline: airlines[airlineIndex], origin, destination, date};
-                    flights.push(flight);
+                    const item = {name: itemName, category: itemCategories[category], amount: amount, restocked: date};
+                    inventoryItems.push(item);
 
-                    logWrapped(`Successfully added flight ${flight.id} with the following details:`);
-                    console.log(createFlightEntry(flight));
+                    logWrapped(`Successfully added item ${itemName} with the following details:`);
+                    console.log(createItemEntry(item));
                     readlineSync.keyInPause(wrapString("Press q to return to main menu..."), {limit: ["q"], guide: false});
                     break;
                 }
@@ -106,7 +133,7 @@ function main() {
         }
         case 2:
             break;
-    }           
+    }    
 } while (input !== 2);
 
     console.clear();

@@ -25,11 +25,11 @@ jobs:
         run: npm ci
       - name: Perform Static Analysis with ESLint
         run: npx eslint -o eslint_report.json -f json
-        continue-on-error: true
       - name: Create ESLint Annotations
         uses: ataylorme/eslint-annotate-action@v3
         with:
           only-pr-files: false
+        continue-on-error: true
       - name: Run Jest Tests
         run: npm test
       - name: Upload Jest Test Reports

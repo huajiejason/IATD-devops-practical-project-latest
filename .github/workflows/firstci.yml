@@ -23,12 +23,12 @@ jobs:
           cache: npm
       - name: Initialise npm
         run: npm ci
-      - name: Perform Static Analysis with ESLint
-        run: npx eslint -o eslint_report.json -f json
       - name: Create ESLint Annotations
         uses: ataylorme/eslint-annotate-action@v3
         with:
           only-pr-files: false
+      - name: Perform Static Analysis with ESLint
+        run: npx eslint -o eslint_report.json -f json
         continue-on-error: true
       - name: Run Jest Tests
         run: npm test
